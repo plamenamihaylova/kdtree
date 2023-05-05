@@ -107,7 +107,6 @@ public class KdTree {
             traverse(node.left, rect, queue);
             // if (node.right != null)
             traverse(node.right, rect, queue);
-
         }
 
         return queue;
@@ -115,45 +114,30 @@ public class KdTree {
 
 
     public Point2D nearest(Point2D queryPoint) {
-        // double champion = root.point.distanceTo(queryPoint);
-
         return nearest(root, queryPoint, root.point, 0);
     }
 
     private Point2D nearest(Node node, Point2D queryPoint, Point2D champion, int depth) {
         if (node == null) return champion;
 
-        int nextDepth = (depth + 1) % 2;
+        if (node.point.distanceTo(queryPoint) < champion.distanceTo(queryPoint))
+            champion = node.point;
 
+        int nextDepth = (depth + 1) % 2;
         // split horizontally, compare by x
         if (nextDepth != 0) {
             int cmp = Double.compare(queryPoint.x(), node.point.x());
-
             if (cmp < 0) champion = nearest(node.left, queryPoint, champion, nextDepth);
             else champion = nearest(node.right, queryPoint, champion, nextDepth);
         }
         // split vertically, compare by y
         else {
             int cmp = Double.compare(queryPoint.y(), node.point.y());
-            if (cmp < 0) {
-
-                node.left = insert(node, pointToInsert, bottomRect, nextDepth);
-            }
-
-            else { // if (cmp > 0) {
-                RectHV topRect = new RectHV(node.rect.xmin(), node.point.y(),
-                                            node.rect.xmax(), node.rect.ymax());
-                node.right = insert(node.right, pointToInsert, topRect, nextDepth);
-            }
-            // else node.point = pointToInsert;
+            if (cmp < 0) champion = nearest(node, queryPoint, champion, nextDepth);
+            else champion = nearest(node.right, queryPoint, champion, nextDepth);
         }
 
-        node.n = size(node.left) + size(node.right) + 1;
-        return node;
-
-
-        if (minDistance == root.point.distanceTo(queryPoint)) return root.point;
-        return node.point;
+        return champion;
     }
 
     public static void main(String[] args) {
