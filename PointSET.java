@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.RectHV;
 import java.util.TreeSet;
 
 public class PointSET {
-
     private TreeSet<Point2D> points;
 
     public PointSET() {
@@ -38,8 +37,10 @@ public class PointSET {
     public Iterable<Point2D> range(RectHV rect) {
         TreeSet<Point2D> pointsInRange = new TreeSet<>();
         for (Point2D point : points) {
-            boolean isPointInsideRectAbscissa = point.x() > rect.xmin() && point.x() < rect.xmax();
-            boolean isPointInsideRectOrdinate = point.y() > rect.ymin() && point.y() < rect.ymax();
+            boolean isPointInsideRectAbscissa = point.x() >= rect.xmin()
+                    && point.x() <= rect.xmax();
+            boolean isPointInsideRectOrdinate = point.y() >= rect.ymin()
+                    && point.y() <= rect.ymax();
 
             if (isPointInsideRectAbscissa && isPointInsideRectOrdinate) pointsInRange.add(point);
         }
