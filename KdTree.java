@@ -38,7 +38,7 @@ public class KdTree {
 
 
     public void insert(Point2D p) {
-        root = insert(root, p, root.rect, 0);
+        root = insert(root, p, null, 0);
     }
 
     private Node insert(Node node, Point2D pointToInsert, RectHV rect, int depth) {
