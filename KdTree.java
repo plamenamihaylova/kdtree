@@ -20,7 +20,7 @@ public class KdTree {
     }
 
     public KdTree() {
-        root = null;
+        // root = null;
     }
 
     public boolean isEmpty() {
@@ -28,11 +28,11 @@ public class KdTree {
     }
 
     public int size() {
-        if (isEmpty()) return 0;
         return size(root);
     }
 
     private int size(Node node) {
+        if (node == null) return 0;
         return node.n;
     }
 
@@ -120,7 +120,7 @@ public class KdTree {
     private Point2D nearest(Node node, Point2D queryPoint, Point2D champion, int depth) {
         if (node == null) return champion;
 
-        if (node.point.distanceTo(queryPoint) < champion.distanceTo(queryPoint))
+        if (node.point.distanceSquaredTo(queryPoint) < champion.distanceSquaredTo(queryPoint))
             champion = node.point;
 
         int nextDepth = (depth + 1) % 2;
