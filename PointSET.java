@@ -19,10 +19,12 @@ public class PointSET {
     }
 
     public void insert(Point2D p) {
+        if (p == null) throw new IllegalArgumentException();
         points.add(p);
     }
 
     public boolean contains(Point2D p) {
+        if (p == null) throw new IllegalArgumentException();
         return points.contains(p);
     }
 
@@ -35,6 +37,7 @@ public class PointSET {
 
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect) {
+        if (rect == null) throw new IllegalArgumentException();
         TreeSet<Point2D> pointsInRange = new TreeSet<>();
         for (Point2D point : points) {
             boolean isPointInsideRectAbscissa = point.x() >= rect.xmin()
@@ -49,6 +52,7 @@ public class PointSET {
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
+        if (p == null) throw new IllegalArgumentException();
         Point2D nearestPoint = new Point2D(0, 0);
 
         for (Point2D point : points) {
