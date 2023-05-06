@@ -89,7 +89,26 @@ public class KdTree {
     }
 
     public boolean contains(Point2D p) {
-        return false; // get(key) != null;
+        return contains(root, p, 0);
+    }
+
+    private boolean contains(Node node, Point2D p, int depth) {
+        if (node == null) return false;
+
+        int nextDepth = (depth + 1) % 2;
+        // split horizontally, compare by x
+        if (nextDepth != 0) {
+            int cmp = Double.compare(p.x(), node.point.x());
+            if (cmp < 0) contains(node.left, p, nextDepth);
+            else if (cmp > 0) contains(node.right, p, nextDepth);
+            else return true;
+        }
+        // split vertically, compare by y
+        // else {
+        int cmp = Double.compare(p.y(), node.point.y());
+        if (cmp < 0) contains(node.left, p, nextDepth);
+        else if (cmp > 0) contains(node.right, p, nextDepth);
+        return true;
     }
 
     public void draw() {
@@ -135,7 +154,7 @@ public class KdTree {
         // split vertically, compare by y
         else {
             int cmp = Double.compare(queryPoint.y(), node.point.y());
-            if (cmp < 0) champion = nearest(node, queryPoint, champion, nextDepth);
+            if (cmp < 0) champion = nearest(node.left, queryPoint, champion, nextDepth);
             else champion = nearest(node.right, queryPoint, champion, nextDepth);
         }
 
