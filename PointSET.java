@@ -51,16 +51,16 @@ public class PointSET {
     }
 
     // a nearest neighbor in the set to point p; null if the set is empty
-    public Point2D nearest(Point2D p) {
-        if (p == null) throw new IllegalArgumentException();
-        Point2D nearestPoint = new Point2D(0, 0);
+    public Point2D nearest(Point2D queryPoint) {
+        if (queryPoint == null) throw new IllegalArgumentException();
+        Point2D champion = points.first();
 
         for (Point2D point : points) {
-            if (p.distanceSquaredTo(point) < p.distanceSquaredTo(nearestPoint))
-                nearestPoint = point;
+            if (point.distanceSquaredTo(queryPoint) < champion.distanceSquaredTo(queryPoint))
+                champion = point;
         }
 
-        return nearestPoint;
+        return champion;
     }
 
     public static void main(String[] args) {
