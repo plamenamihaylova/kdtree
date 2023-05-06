@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 
+import java.util.NoSuchElementException;
 import java.util.TreeSet;
 
 public class PointSET {
@@ -11,7 +12,7 @@ public class PointSET {
     }
 
     public boolean isEmpty() {
-        return points.size() == 0;
+        return points == null;
     }
 
     public int size() {
@@ -28,24 +29,23 @@ public class PointSET {
         return points.contains(p);
     }
 
-    // draw all points to standard draw
     public void draw() {
-        for (Point2D point : points) {
-            point.draw();
-        }
+        for (Point2D point : points) point.draw();
     }
 
     // all points that are inside the rectangle (or on the boundary)
     public Iterable<Point2D> range(RectHV rect) {
         if (rect == null) throw new IllegalArgumentException();
+        if (isEmpty()) throw new NoSuchElementException();
+
         TreeSet<Point2D> pointsInRange = new TreeSet<>();
         for (Point2D point : points) {
             boolean isPointInsideRectAbscissa = point.x() >= rect.xmin()
                     && point.x() <= rect.xmax();
             boolean isPointInsideRectOrdinate = point.y() >= rect.ymin()
                     && point.y() <= rect.ymax();
-
-            if (isPointInsideRectAbscissa && isPointInsideRectOrdinate) pointsInRange.add(point);
+            if (isPointInsideRectAbscissa && isPointInsideRectOrdinate)
+                pointsInRange.add(point);
         }
         return pointsInRange;
     }
@@ -53,13 +53,12 @@ public class PointSET {
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D queryPoint) {
         if (queryPoint == null) throw new IllegalArgumentException();
-        Point2D champion = points.first();
+        if (isEmpty()) throw new NoSuchElementException();
 
-        for (Point2D point : points) {
+        Point2D champion = points.first();
+        for (Point2D point : points)
             if (point.distanceSquaredTo(queryPoint) < champion.distanceSquaredTo(queryPoint))
                 champion = point;
-        }
-
         return champion;
     }
 

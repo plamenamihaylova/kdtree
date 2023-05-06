@@ -21,7 +21,6 @@ public class KdTree {
     }
 
     public KdTree() {
-        // root = null;
     }
 
     public boolean isEmpty() {
@@ -39,7 +38,7 @@ public class KdTree {
 
 
     public void insert(Point2D p) {
-        // RectHV rectToInsert = root.rect != null ? root.rect : new RectHV(0, 0, 1, 1);
+        if (p == null) throw new IllegalArgumentException();
         root = insert(root, p, root != null ? root.rect : new RectHV(0, 0, 1, 1), 0);
     }
 
@@ -89,6 +88,7 @@ public class KdTree {
     }
 
     public boolean contains(Point2D p) {
+        if (p == null) throw new IllegalArgumentException();
         return contains(root, p, 0);
     }
 
@@ -99,15 +99,15 @@ public class KdTree {
         // split horizontally, compare by x
         if (nextDepth != 0) {
             int cmp = Double.compare(p.x(), node.point.x());
-            if (cmp < 0) contains(node.left, p, nextDepth);
-            else if (cmp > 0) contains(node.right, p, nextDepth);
+            if (cmp < 0) return contains(node.left, p, nextDepth);
+            else if (cmp > 0) return contains(node.right, p, nextDepth);
             else return true;
         }
         // split vertically, compare by y
         // else {
         int cmp = Double.compare(p.y(), node.point.y());
-        if (cmp < 0) contains(node.left, p, nextDepth);
-        else if (cmp > 0) contains(node.right, p, nextDepth);
+        if (cmp < 0) return contains(node.left, p, nextDepth);
+        else if (cmp > 0) return contains(node.right, p, nextDepth);
         return true;
     }
 
@@ -116,6 +116,7 @@ public class KdTree {
     }
 
     public Iterable<Point2D> range(RectHV rect) {
+        if (rect == null) throw new IllegalArgumentException();
         return traverse(root, rect, new Queue<>());
     }
 
@@ -123,18 +124,16 @@ public class KdTree {
         if (node == null) return queue;
         if (node.rect.intersects(rect)) {
             if (rect.contains(node.point)) queue.enqueue(node.point);
-
             // if (node.left != null)
             traverse(node.left, rect, queue);
             // if (node.right != null)
             traverse(node.right, rect, queue);
         }
-
         return queue;
     }
 
-
     public Point2D nearest(Point2D queryPoint) {
+        if (queryPoint == null) throw new IllegalArgumentException();
         return nearest(root, queryPoint, root.point, 0);
     }
 
