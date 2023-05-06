@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
@@ -38,12 +39,13 @@ public class KdTree {
 
 
     public void insert(Point2D p) {
-        root = insert(root, p, null, 0);
+        // RectHV rectToInsert = root.rect != null ? root.rect : new RectHV(0, 0, 1, 1);
+        root = insert(root, p, root != null ? root.rect : new RectHV(0, 0, 1, 1), 0);
     }
 
     private Node insert(Node node, Point2D pointToInsert, RectHV rect, int depth) {
         if (node == null)
-            return new Node(pointToInsert, rect != null ? rect : new RectHV(0, 0, 1, 1), 1);
+            return new Node(pointToInsert, rect, 1);
 
         int nextDepth = (depth + 1) % 2;
 
@@ -71,7 +73,7 @@ public class KdTree {
             if (cmp < 0) {
                 RectHV bottomRect = new RectHV(node.rect.xmin(), node.rect.ymin(),
                                                node.rect.xmax(), node.point.y());
-                node.left = insert(node, pointToInsert, bottomRect, nextDepth);
+                node.left = insert(node.left, pointToInsert, bottomRect, nextDepth);
             }
 
             else { // if (cmp > 0) {
@@ -141,6 +143,15 @@ public class KdTree {
     }
 
     public static void main(String[] args) {
-
+        String filename = args[0];
+        In in = new In(filename);
+        KdTree kdtree = new KdTree();
+        while (!in.isEmpty()) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            Point2D p = new Point2D(x, y);
+            kdtree.insert(p);
+        }
+        System.out.println(kdtree.size());
     }
 }
