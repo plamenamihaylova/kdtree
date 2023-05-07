@@ -43,28 +43,23 @@ public class KdTree {
     }
 
     private Node insert(Node node, Point2D pointToInsert, RectHV rect, int depth) {
-        if (node == null)
-            return new Node(pointToInsert, rect, 1);
+        if (node == null) return new Node(pointToInsert, rect, 1);
 
         int nextDepth = (depth + 1) % 2;
 
         // split horizontally, compare by x
         if (nextDepth != 0) {
             int cmp = Double.compare(pointToInsert.x(), node.point.x());
-
             if (cmp < 0) {
                 RectHV leftRect = new RectHV(node.rect.xmin(), node.rect.ymin(),
                                              node.point.x(), node.rect.ymax());
                 node.left = insert(node.left, pointToInsert, leftRect, nextDepth);
             }
-            else { // if (cmp > 0) {
+            else {
                 RectHV rightRect = new RectHV(node.point.x(), node.rect.ymin(),
                                               node.rect.xmax(), node.rect.ymax());
                 node.right = insert(node.right, pointToInsert, rightRect, nextDepth);
             }
-
-            // else node.point = pointToInsert;
-
         }
         // split vertically, compare by y
         else {
@@ -74,41 +69,45 @@ public class KdTree {
                                                node.rect.xmax(), node.point.y());
                 node.left = insert(node.left, pointToInsert, bottomRect, nextDepth);
             }
-
-            else { // if (cmp > 0) {
+            else {
                 RectHV topRect = new RectHV(node.rect.xmin(), node.point.y(),
                                             node.rect.xmax(), node.rect.ymax());
                 node.right = insert(node.right, pointToInsert, topRect, nextDepth);
             }
-            // else node.point = pointToInsert;
         }
-
         node.n = size(node.left) + size(node.right) + 1;
         return node;
     }
 
-    public boolean contains(Point2D p) {
-        if (p == null) throw new IllegalArgumentException();
-        return contains(root, p, 0);
+    public boolean contains(Point2D searchPoint) {
+        if (searchPoint == null) throw new IllegalArgumentException();
+        return contains(root, searchPoint, 0);
     }
 
-    private boolean contains(Node node, Point2D p, int depth) {
+    private boolean contains(Node node, Point2D searchPoint, int depth) {
         if (node == null) return false;
 
-        int cmpPoints = node.point.compareTo(p);
+        boolean arePointsEqual = node.point.equals(searchPoint);
 
-        if (cmpPoints != 0) {
+        if (!arePointsEqual) {
             int nextDepth = (depth + 1) % 2;
             if (nextDepth != 0) {
-                int cmp = Double.compare(p.x(), node.point.x());
-                if (cmp < 0) return contains(node.left, p, nextDepth);
-                else return contains(node.right, p, nextDepth);
+                int cmp = Double.compare(searchPoint.x(), node.point.x());
+                return contains(cmp, node, searchPoint, nextDepth);
+                // if (cmp < 0) return contains(node.left, searchPoint, nextDepth);
+                // else return contains(node.right, searchPoint, nextDepth);
             }
-            int cmp = Double.compare(p.y(), node.point.y());
-            if (cmp < 0) return contains(node.left, p, nextDepth);
-            else return contains(node.right, p, nextDepth);
+            int cmp = Double.compare(searchPoint.y(), node.point.y());
+            return contains(cmp, node, searchPoint, nextDepth);
+            // if (cmp < 0) return contains(node.left, p, nextDepth);
+            // else return contains(node.right, p, nextDepth);
         }
         return true;
+    }
+
+    private boolean contains(int cmp, Node node, Point2D searchPoint, int depth) {
+        if (cmp < 0) return contains(node.left, searchPoint, depth);
+        else return contains(node.right, searchPoint, depth);
     }
 
     public void draw() {
@@ -125,9 +124,7 @@ public class KdTree {
         if (node == null) return queue;
         if (node.rect.intersects(rect)) {
             if (rect.contains(node.point)) queue.enqueue(node.point);
-            // if (node.left != null)
             traverse(node.left, rect, queue);
-            // if (node.right != null)
             traverse(node.right, rect, queue);
         }
         return queue;
@@ -154,14 +151,10 @@ public class KdTree {
             int cmp = Double.compare(queryPoint.x(), node.point.x());
             if (cmp < 0) {
                 champion = nearest(node.left, queryPoint, champion, nextDepth);
-                // if (champion.distanceSquaredTo(queryPoint) > node.right.point.distanceSquaredTo(
-                //         queryPoint))
                 champion = nearest(node.right, queryPoint, champion, nextDepth);
             }
             else {
                 champion = nearest(node.right, queryPoint, champion, nextDepth);
-                // if (champion.distanceSquaredTo(queryPoint) > node.left.point.distanceSquaredTo(
-                //         queryPoint))
                 champion = nearest(node.left, queryPoint, champion, nextDepth);
             }
         }
@@ -170,14 +163,10 @@ public class KdTree {
             int cmp = Double.compare(queryPoint.y(), node.point.y());
             if (cmp < 0) {
                 champion = nearest(node.left, queryPoint, champion, nextDepth);
-                // if (champion.distanceSquaredTo(queryPoint) > node.right.point.distanceSquaredTo(
-                //         queryPoint))
                 champion = nearest(node.right, queryPoint, champion, nextDepth);
             }
             else {
                 champion = nearest(node.right, queryPoint, champion, nextDepth);
-                // if (champion.distanceSquaredTo(queryPoint) > node.left.point.distanceSquaredTo(
-                //         queryPoint))
                 champion = nearest(node.left, queryPoint, champion, nextDepth);
             }
         }
