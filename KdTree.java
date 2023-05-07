@@ -52,12 +52,17 @@ public class KdTree {
         if (nextDepth != 0) {
             int cmp = Double.compare(pointToInsert.x(), node.point.x());
             if (cmp < 0) {
-                RectHV leftRect = new RectHV(rect.xmin(), rect.ymin(), node.point.x(), rect.ymax());
+                RectHV leftRect;
+                if (node.left == null)
+                    leftRect = new RectHV(rect.xmin(), rect.ymin(), node.point.x(), rect.ymax());
+                else leftRect = node.left.rect;
                 node.left = insert(node.left, pointToInsert, leftRect, nextDepth);
             }
             else {
-                RectHV rightRect =
-                        new RectHV(node.point.x(), rect.ymin(), rect.xmax(), rect.ymax());
+                RectHV rightRect;
+                if (node.right == null)
+                    rightRect = new RectHV(node.point.x(), rect.ymin(), rect.xmax(), rect.ymax());
+                else rightRect = node.right.rect;
                 node.right = insert(node.right, pointToInsert, rightRect, nextDepth);
             }
         }
@@ -65,13 +70,17 @@ public class KdTree {
         else {
             int cmp = Double.compare(pointToInsert.y(), node.point.y());
             if (cmp < 0) {
-                RectHV bottomRect =
-                        new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), node.point.y());
+                RectHV bottomRect;
+                if (node.left == null)
+                    bottomRect = new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), node.point.y());
+                else bottomRect = node.left.rect;
                 node.left = insert(node.left, pointToInsert, bottomRect, nextDepth);
             }
             else {
-                RectHV topRect =
-                        new RectHV(rect.xmin(), node.point.y(), rect.xmax(), rect.ymax());
+                RectHV topRect;
+                if (node.right == null)
+                    topRect = new RectHV(rect.xmin(), node.point.y(), rect.xmax(), rect.ymax());
+                else topRect = node.right.rect;
                 node.right = insert(node.right, pointToInsert, topRect, nextDepth);
             }
         }
