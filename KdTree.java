@@ -39,6 +39,7 @@ public class KdTree {
 
     public void insert(Point2D p) {
         if (p == null) throw new IllegalArgumentException();
+        if (contains(p)) return;
         root = insert(root, p, root != null ? root.rect : new RectHV(0, 0, 1, 1), 0);
     }
 
@@ -95,19 +96,24 @@ public class KdTree {
     private boolean contains(Node node, Point2D p, int depth) {
         if (node == null) return false;
 
-        int nextDepth = (depth + 1) % 2;
-        // split horizontally, compare by x
-        if (nextDepth != 0) {
-            int cmp = Double.compare(p.x(), node.point.x());
+        int cmpPoints = node.point.compareTo(p);
+
+        if (cmpPoints != 0) {
+            int nextDepth = (depth + 1) % 2;
+            // split horizontally, compare by x
+            if (nextDepth != 0) {
+                int cmp = Double.compare(p.x(), node.point.x());
+                if (cmp < 0) return contains(node.left, p, nextDepth);
+                else return contains(node.right, p, nextDepth);
+                // else if (Double.compare(p.x));
+            }
+            // split vertically, compare by y
+            // else {
+            int cmp = Double.compare(p.y(), node.point.y());
             if (cmp < 0) return contains(node.left, p, nextDepth);
-            else if (cmp > 0) return contains(node.right, p, nextDepth);
-            else return true;
+            else return contains(node.right, p, nextDepth);
         }
-        // split vertically, compare by y
-        // else {
-        int cmp = Double.compare(p.y(), node.point.y());
-        if (cmp < 0) return contains(node.left, p, nextDepth);
-        else if (cmp > 0) return contains(node.right, p, nextDepth);
+
         return true;
     }
 
@@ -117,6 +123,7 @@ public class KdTree {
 
     public Iterable<Point2D> range(RectHV rect) {
         if (rect == null) throw new IllegalArgumentException();
+        if (isEmpty()) return null;
         return traverse(root, rect, new Queue<>());
     }
 
@@ -134,6 +141,7 @@ public class KdTree {
 
     public Point2D nearest(Point2D queryPoint) {
         if (queryPoint == null) throw new IllegalArgumentException();
+        if (isEmpty()) return null;
         return nearest(root, queryPoint, root.point, 0);
     }
 
