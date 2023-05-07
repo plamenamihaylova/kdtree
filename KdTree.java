@@ -47,17 +47,17 @@ public class KdTree {
 
         int nextDepth = (depth + 1) % 2;
 
+
         // split horizontally, compare by x
         if (nextDepth != 0) {
             int cmp = Double.compare(pointToInsert.x(), node.point.x());
             if (cmp < 0) {
-                RectHV leftRect = new RectHV(node.rect.xmin(), node.rect.ymin(),
-                                             node.point.x(), node.rect.ymax());
+                RectHV leftRect = new RectHV(rect.xmin(), rect.ymin(), node.point.x(), rect.ymax());
                 node.left = insert(node.left, pointToInsert, leftRect, nextDepth);
             }
             else {
-                RectHV rightRect = new RectHV(node.point.x(), node.rect.ymin(),
-                                              node.rect.xmax(), node.rect.ymax());
+                RectHV rightRect =
+                        new RectHV(node.point.x(), rect.ymin(), rect.xmax(), rect.ymax());
                 node.right = insert(node.right, pointToInsert, rightRect, nextDepth);
             }
         }
@@ -65,13 +65,13 @@ public class KdTree {
         else {
             int cmp = Double.compare(pointToInsert.y(), node.point.y());
             if (cmp < 0) {
-                RectHV bottomRect = new RectHV(node.rect.xmin(), node.rect.ymin(),
-                                               node.rect.xmax(), node.point.y());
+                RectHV bottomRect =
+                        new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), node.point.y());
                 node.left = insert(node.left, pointToInsert, bottomRect, nextDepth);
             }
             else {
-                RectHV topRect = new RectHV(node.rect.xmin(), node.point.y(),
-                                            node.rect.xmax(), node.rect.ymax());
+                RectHV topRect =
+                        new RectHV(rect.xmin(), node.point.y(), rect.xmax(), rect.ymax());
                 node.right = insert(node.right, pointToInsert, topRect, nextDepth);
             }
         }
@@ -86,7 +86,6 @@ public class KdTree {
 
     private boolean contains(Node node, Point2D searchPoint, int depth) {
         if (node == null) return false;
-
         boolean arePointsEqual = node.point.equals(searchPoint);
 
         if (!arePointsEqual) {
@@ -140,33 +139,30 @@ public class KdTree {
         if (!(node.rect.distanceSquaredTo(queryPoint) < champion.distanceSquaredTo(queryPoint)))
             return champion;
 
-
         int nextDepth = (depth + 1) % 2;
         // split horizontally, compare by x
         if (nextDepth != 0) {
             int cmp = Double.compare(queryPoint.x(), node.point.x());
-            if (cmp < 0) {
-                champion = nearest(node.left, queryPoint, champion, nextDepth);
-                champion = nearest(node.right, queryPoint, champion, nextDepth);
-            }
-            else {
-                champion = nearest(node.right, queryPoint, champion, nextDepth);
-                champion = nearest(node.left, queryPoint, champion, nextDepth);
-            }
+            champion = nearest(cmp, node, queryPoint, champion, nextDepth);
         }
         // split vertically, compare by y
         else {
             int cmp = Double.compare(queryPoint.y(), node.point.y());
-            if (cmp < 0) {
-                champion = nearest(node.left, queryPoint, champion, nextDepth);
-                champion = nearest(node.right, queryPoint, champion, nextDepth);
-            }
-            else {
-                champion = nearest(node.right, queryPoint, champion, nextDepth);
-                champion = nearest(node.left, queryPoint, champion, nextDepth);
-            }
+            champion = nearest(cmp, node, queryPoint, champion, nextDepth);
         }
 
+        return champion;
+    }
+
+    private Point2D nearest(int cmp, Node node, Point2D queryPoint, Point2D champion, int depth) {
+        if (cmp < 0) {
+            champion = nearest(node.left, queryPoint, champion, depth);
+            champion = nearest(node.right, queryPoint, champion, depth);
+        }
+        else {
+            champion = nearest(node.right, queryPoint, champion, depth);
+            champion = nearest(node.left, queryPoint, champion, depth);
+        }
         return champion;
     }
 
