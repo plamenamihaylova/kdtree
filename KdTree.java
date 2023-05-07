@@ -94,13 +94,9 @@ public class KdTree {
             if (nextDepth != 0) {
                 int cmp = Double.compare(searchPoint.x(), node.point.x());
                 return contains(cmp, node, searchPoint, nextDepth);
-                // if (cmp < 0) return contains(node.left, searchPoint, nextDepth);
-                // else return contains(node.right, searchPoint, nextDepth);
             }
             int cmp = Double.compare(searchPoint.y(), node.point.y());
             return contains(cmp, node, searchPoint, nextDepth);
-            // if (cmp < 0) return contains(node.left, p, nextDepth);
-            // else return contains(node.right, p, nextDepth);
         }
         return true;
     }
