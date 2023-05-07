@@ -52,40 +52,50 @@ public class KdTree {
         if (nextDepth != 0) {
             int cmp = Double.compare(pointToInsert.x(), node.point.x());
             if (cmp < 0) {
-                RectHV leftRect;
-                if (node.left == null)
-                    leftRect = new RectHV(rect.xmin(), rect.ymin(), node.point.x(), rect.ymax());
-                else leftRect = node.left.rect;
-                node.left = insert(node.left, pointToInsert, leftRect, nextDepth);
+                node.left = insert(node.left,
+                                   pointToInsert,
+                                   constructHorizontalRectangle(
+                                           node.left, rect, rect.xmin(), node.point.x()),
+                                   nextDepth);
             }
             else {
-                RectHV rightRect;
-                if (node.right == null)
-                    rightRect = new RectHV(node.point.x(), rect.ymin(), rect.xmax(), rect.ymax());
-                else rightRect = node.right.rect;
-                node.right = insert(node.right, pointToInsert, rightRect, nextDepth);
+                node.right = insert(node.right,
+                                    pointToInsert,
+                                    constructHorizontalRectangle(
+                                            node.right, rect, node.point.x(), rect.xmax()),
+                                    nextDepth);
             }
         }
         // split vertically, compare by y
         else {
             int cmp = Double.compare(pointToInsert.y(), node.point.y());
             if (cmp < 0) {
-                RectHV bottomRect;
-                if (node.left == null)
-                    bottomRect = new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), node.point.y());
-                else bottomRect = node.left.rect;
-                node.left = insert(node.left, pointToInsert, bottomRect, nextDepth);
+                node.left = insert(node.left,
+                                   pointToInsert,
+                                   constructVerticalRectangle(
+                                           node.left, rect, rect.ymin(), node.point.y()),
+                                   nextDepth);
             }
             else {
-                RectHV topRect;
-                if (node.right == null)
-                    topRect = new RectHV(rect.xmin(), node.point.y(), rect.xmax(), rect.ymax());
-                else topRect = node.right.rect;
-                node.right = insert(node.right, pointToInsert, topRect, nextDepth);
+                node.right = insert(node.right,
+                                    pointToInsert,
+                                    constructVerticalRectangle(
+                                            node.right, rect, node.point.y(), rect.ymax()),
+                                    nextDepth);
             }
         }
         node.n = size(node.left) + size(node.right) + 1;
         return node;
+    }
+
+    private RectHV constructHorizontalRectangle(Node node, RectHV rect, double xmin, double xmax) {
+        if (node == null) return new RectHV(xmin, rect.ymin(), xmax, rect.ymax());
+        return node.rect;
+    }
+
+    private RectHV constructVerticalRectangle(Node node, RectHV rect, double ymin, double ymax) {
+        if (node == null) return new RectHV(rect.xmin(), ymin, rect.xmax(), ymax);
+        return node.rect;
     }
 
     public boolean contains(Point2D searchPoint) {
