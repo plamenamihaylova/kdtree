@@ -28,10 +28,13 @@ range search and nearest-neighbor search.
 By unit square we will understand such a square that all its points have x- and y-coordinates between 0 and 1.
 By range search we will understand finding all the points contained in a query rectangle.
 By nearest neighbor search we will understand finding the closest point to a query point.
-The task is to implement two approaches to this problem - brute-force implementation and 2d-tree implementation.
 
-For the brute-force implementaion can be used ``java.util.TreeSet``.
-For the 2d-tree implementation mutable data type KdTree.java that uses a 2d-tree should be implemented.
+The task is to implement two approaches to this problem: **brute-force** implementation and **2d-tree** implementation.
+
+For the brute-force implementaion can be used `java.util.TreeSet`.
+
+For the 2d-tree implementation mutable data type `KdTree.java` that uses a 2d-tree should be implemented.
+
 A 2d-tree is a generalization of a BST to two-dimensional keys.
 The idea is to build a BST with points in the nodes, using the x- and y-coordinates of the points as keys in strictly
 alternating sequence.
