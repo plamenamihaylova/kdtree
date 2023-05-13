@@ -1,4 +1,4 @@
-<img height="400" src="logo.png" title="8 puzzle logo" width="1000"/>
+<img height="400" src="logo.png" title="kd tree logo" width="1000"/>
 
 ### KD-Trees
 
@@ -74,6 +74,8 @@ public class KdTree {
    public static void main(String[] args)       // unit testing of the methods (optional) 
 }
 ```
+
+---
 
 ### Useful resources that have helped me in completing this assignment:
 
